@@ -65,8 +65,8 @@ def fineTune(path,common_voice,per_device_train_batch_size=16):
     
     training_args = Seq2SeqTrainingArguments(
         output_dir="./fineTue/"+path, # change to a repo name of your choice
-        per_device_train_batch_size=per_device_train_batch_size,
-        gradient_accumulation_steps=16//per_device_train_batch_size, # increase by 2x for every 2x decrease in batch size
+        per_device_train_batch_size=2*per_device_train_batch_size,
+        gradient_accumulation_steps=2*16//per_device_train_batch_size, # increase by 2x for every 2x decrease in batch size
         learning_rate=1e-5,
         warmup_steps=500,
         max_steps=4000,
@@ -84,6 +84,7 @@ def fineTune(path,common_voice,per_device_train_batch_size=16):
         metric_for_best_model="wer",
         greater_is_better=False,
         push_to_hub=False,
+        
     )
     from transformers import Seq2SeqTrainer
     
@@ -95,6 +96,7 @@ def fineTune(path,common_voice,per_device_train_batch_size=16):
         data_collator=data_collator,
         compute_metrics=compute_metrics,
         tokenizer=processor.feature_extractor,
+        
     )
     processor.save_pretrained("./fineTue/"+path)
     trainer.train()
